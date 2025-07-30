@@ -1,23 +1,21 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import { personalities } from '../personalities.js'; // notice the updated path
 import fetch from 'node-fetch';
-import { personalities } from './personalities.js';
 
 const app = express();
+
 app.use(cors({
-  origin: 'https://yamenai.vercel.app', // your frontend
+  origin: 'https://yamenai.vercel.app',
   methods: ['POST'],
   allowedHeaders: ['Content-Type'],
 }));
 
 app.use(bodyParser.json());
 
-const PORT = 5000;
-
-// ✅ AIMLapi config
 const API_KEY = '5f00e13501cb40e6a042fba0320d7427';
-const MODEL = 'gemma-3n-4b'; // Model slug for AIMLapi
+const MODEL = 'gemma-3n-4b';
 
 const identityMemory = {
   yamengpt: [
@@ -30,7 +28,7 @@ const identityMemory = {
   ]
 };
 
-app.post('/chat', async (req, res) => {
+app.post('/api/chat', async (req, res) => {
   const { messages, personality } = req.body;
 
   const selected = personalities[personality] || personalities.yamengpt;
@@ -52,22 +50,17 @@ app.post('/chat', async (req, res) => {
       body: JSON.stringify({
         model: MODEL,
         messages: fullMessages,
-        temperature: 0.8, // Make it more expressive and natural
+        temperature: 0.8,
         max_tokens: 1024,
       }),
     });
 
     const data = await response.json();
-
-    // Optional: log to verify model behavior
-    console.log('Request sent:', fullMessages);
-    console.log('Response received:', data);
-
-    res.json(data);
+    res.status(200).json(data);
   } catch (err) {
     console.error('API error:', err);
     res.status(500).json({ error: 'Failed to get response from AI' });
   }
 });
 
-app.listen(PORT, () => console.log(`✅ AIMLapi + Gemma 3N backend running at http://localhost:${PORT}`));
+export default app;
