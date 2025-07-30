@@ -56,7 +56,7 @@ export default function App() {
     setInput('');
     setLoading(true);
 
-    const res = await fetch('https://yamengptserver-n676wzz0m-yamenalesas-projects.vercel.app/chat', {
+    const res = await fetch('yamengpt-server.vercel.app/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: newMessages, personality }),
