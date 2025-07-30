@@ -5,7 +5,12 @@ import fetch from 'node-fetch';
 import { personalities } from './personalities.js';
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://yamenai.vercel.app', // your frontend
+  methods: ['POST'],
+  allowedHeaders: ['Content-Type'],
+}));
+
 app.use(bodyParser.json());
 
 const PORT = 5000;
