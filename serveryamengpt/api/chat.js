@@ -1,18 +1,6 @@
-import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import { personalities } from '../personalities.js'; // notice the updated path
+// api/chat.js
+import { personalities } from '../personalities.js';
 import fetch from 'node-fetch';
-
-const app = express();
-
-app.use(cors({
-  origin: 'https://yamenai.vercel.app',
-  methods: ['POST'],
-  allowedHeaders: ['Content-Type'],
-}));
-
-app.use(bodyParser.json());
 
 const API_KEY = '5f00e13501cb40e6a042fba0320d7427';
 const MODEL = 'gemma-3n-4b';
@@ -28,7 +16,19 @@ const identityMemory = {
   ]
 };
 
-app.post('/api/chat', async (req, res) => {
+// The handler Vercel requires
+export default async function handler(req, res) {
+  // Only allow POST
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return res.status(405).end('Method Not Allowed');
+  }
+
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', 'https://yamenai.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
   const { messages, personality } = req.body;
 
   const selected = personalities[personality] || personalities.yamengpt;
@@ -61,6 +61,4 @@ app.post('/api/chat', async (req, res) => {
     console.error('API error:', err);
     res.status(500).json({ error: 'Failed to get response from AI' });
   }
-});
-
-export default app;
+}
