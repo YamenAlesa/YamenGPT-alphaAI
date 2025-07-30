@@ -58,7 +58,7 @@ export default function App() {
 
     const res = await fetch('https://yamengpt-server.vercel.app/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({ messages: newMessages, personality }),
     });
 
